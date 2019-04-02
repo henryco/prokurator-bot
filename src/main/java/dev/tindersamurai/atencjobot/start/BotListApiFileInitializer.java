@@ -14,6 +14,7 @@ import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ public class BotListApiFileInitializer implements IBotListApiInitializer {
 	private static final class JsonForm {
 		private Map<String, String[]> response;
 		private Map<String, String[]> alias;
+		private String[] error;
 		private String prefix;
 		private String token;
 	}
@@ -45,6 +47,14 @@ public class BotListApiFileInitializer implements IBotListApiInitializer {
 		if (form.prefix == null)
 			throw new NullPointerException("Prefix cannot be null");
 		return form.prefix;
+	}
+
+	@Override
+	public String[] createErrorMsg() {
+		log.info("Error msg: {}", Arrays.toString(form.error));
+		if (form.error == null)
+			throw new NullPointerException("There are no error messages");
+		return form.error;
 	}
 
 	@Override

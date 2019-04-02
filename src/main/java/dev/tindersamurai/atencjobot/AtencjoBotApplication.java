@@ -37,6 +37,16 @@ public class AtencjoBotApplication {
 		return initializer.createResponse();
 	}
 
+	@Bean("error")
+	public String[] provideErrorMessage(IBotListApiInitializer initializer) {
+		try {
+			return initializer.createErrorMsg();
+		} catch (NullPointerException e) {
+			log.warn("Cannot recognize default error message!");
+			return new String[0];
+		}
+	}
+
 	@Bean("prefix")
 	public String provideCommandPrefix(IBotListApiInitializer initializer) {
 		try {
