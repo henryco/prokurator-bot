@@ -17,6 +17,6 @@ public class NewDayNewMeCommand extends AtencjoBotCommandListener {
 
 	@Override
 	public String getCommandName() {
-		return "new day";
+		return CommandsContractList.NEW_DAY;
 	}
 }
