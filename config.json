@@ -1,3 +1,12 @@
 {
-	"token": "NTYyMjY3MzEyODIwOTc3Njg1.XKId3w.jAvUbaTt7a_0saeDOcJoikbZ1BM"
+	"token": "NTYyMjY3MzEyODIwOTc3Njg1.XKId3w.jAvUbaTt7a_0saeDOcJoikbZ1BM",
+	"prefix": "atencjo! ",
+
+	"alias": {
+		"new day": ["nowy dzień", "nowy dzien"]
+	},
+
+	"response": {
+		"new day": ["Nowy ty!", "Nowy ja!"]
+	}
 }
