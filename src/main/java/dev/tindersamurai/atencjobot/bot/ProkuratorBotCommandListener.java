@@ -16,10 +16,8 @@ public abstract class ProkuratorBotCommandListener extends ProkuratorBotEventLis
 	private String[] error;
 	private String prefix;
 
-	@SuppressWarnings("WeakerAccess")
 	protected abstract void onCommand(MessageReceivedEvent event, GuildController controller);
 
-	@SuppressWarnings("WeakerAccess")
 	public abstract String commandName();
 
 	@SuppressWarnings("WeakerAccess")
