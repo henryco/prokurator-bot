@@ -1,6 +1,6 @@
 package dev.tindersamurai.atencjobot.start;
 
-import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.core.JDA;
 
 import javax.security.auth.login.LoginException;
 import java.util.Map;

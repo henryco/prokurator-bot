@@ -2,19 +2,18 @@ package dev.tindersamurai.atencjobot;
 
 import dev.tindersamurai.atencjobot.start.IBotListApiInitializer;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.core.JDA;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import javax.security.auth.login.LoginException;
-import java.util.Map;
 
 @SpringBootApplication @Slf4j
-public class AtencjoBotApplication {
+public class ProkuratorBotApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AtencjoBotApplication.class, args);
+		SpringApplication.run(ProkuratorBotApplication.class, args);
 	}
 
 	@Bean
@@ -25,16 +24,6 @@ public class AtencjoBotApplication {
 			System.exit(42);
 			throw new RuntimeException("Login exception", e);
 		}
-	}
-
-	@Bean("alias")
-	public Map<String, String[]> provideAlias(IBotListApiInitializer initializer) {
-		return initializer.createAlias();
-	}
-
-	@Bean("response")
-	public Map<String, String[]> provideResponse(IBotListApiInitializer initializer) {
-		return initializer.createResponse();
 	}
 
 	@Bean("error")

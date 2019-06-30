@@ -1,35 +1,43 @@
 package dev.tindersamurai.atencjobot.bot;
 
 import lombok.val;
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.managers.GuildController;
+import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.managers.GuildController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;
-
-import java.util.Map;
+import org.springframework.stereotype.Component;
 import java.util.Random;
 
-public abstract class AtencjoBotCommandListener extends AtencjoBotEventListener {
+@Component
+public abstract class ProkuratorBotCommandListener extends ProkuratorBotEventListener {
 
-	private Map<String, String[]> response;
-	private Map<String, String[]> alias;
 	private String[] error;
 	private String prefix;
 
+	@SuppressWarnings("WeakerAccess")
 	protected abstract void onCommand(MessageReceivedEvent event, GuildController controller);
 
+	@SuppressWarnings("WeakerAccess")
 	public abstract String commandName();
 
+	@SuppressWarnings("WeakerAccess")
+	public String[] commandAlias() {
+		return new String[0];
+	}
+
+	@SuppressWarnings("WeakerAccess")
 	protected boolean caseSensitive() {
 		return false;
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	protected Permission[] requiredUserPermissions() {
 		return new Permission[0];
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	protected Permission[] requiredBotPermissions() {
 		return new Permission[0];
 	}
@@ -42,16 +50,6 @@ public abstract class AtencjoBotCommandListener extends AtencjoBotEventListener 
 	@Autowired @Qualifier("error")
 	public final void setErrorMsg(@NonNull String[] errorMsg) {
 		this.error = errorMsg;
-	}
-
-	@Autowired @Qualifier("alias")
-	public final void setAlias(@NonNull Map<String, String[]> alias) {
-		this.alias = alias;
-	}
-
-	@Autowired @Qualifier("response")
-	public final void setResponse(@NonNull Map<String, String[]> response) {
-		this.response = response;
 	}
 
 	@Override
@@ -68,8 +66,6 @@ public abstract class AtencjoBotCommandListener extends AtencjoBotEventListener 
 			sendErrorMsg(event, e);
 			throw e;
 		}
-
-		response(event);
 	}
 
 	private void userHasRequiredPermissions(MessageReceivedEvent event) {
@@ -94,7 +90,7 @@ public abstract class AtencjoBotCommandListener extends AtencjoBotEventListener 
 
 	private boolean resolveCommand(String input) {
 		val content = cased(input, caseSensitive()).trim();
-		val names = alias.get(commandName());
+		val names = commandAlias();
 		if (names != null) {
 			for (val name: names) {
 				if (content.startsWith(prefix + cased(name, caseSensitive()).trim()))
@@ -112,11 +108,6 @@ public abstract class AtencjoBotCommandListener extends AtencjoBotEventListener 
 		event.getChannel().sendMessage(coreMsg + "\n" + reason).queue();
 	}
 
-	private void response(MessageReceivedEvent event) {
-		val res = response.get(commandName());
-		if (res == null) return;
-		event.getChannel().sendMessage(res[new Random().nextInt(res.length)]).queue();
-	}
 
 	private static String cased(String value, boolean sensitive) {
 		return sensitive ? value : value.toLowerCase();

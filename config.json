@@ -1,13 +1,5 @@
 {
-	"token": "NTYyMjY3MzEyODIwOTc3Njg1.XKId3w.jAvUbaTt7a_0saeDOcJoikbZ1BM",
+	"token": "NTk0ODk3NDkwNzU5NjQ3MjMy.XRjJZA.kWSASX9JLZ82qn_Y2YApW-za0XY",
 	"error": ["Coś coś się popsuło..."],
-	"prefix": "atencjo! ",
-
-	"alias": {
-		"new day": ["nowy dzień", "nowy dzien"]
-	},
-
-	"response": {
-		"new day": ["Nowy ty!", "Nowy ja!"]
-	}
+	"prefix": "prokurator-san "
 }

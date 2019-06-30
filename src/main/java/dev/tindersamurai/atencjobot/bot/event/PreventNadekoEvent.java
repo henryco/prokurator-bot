@@ -1,14 +1,14 @@
 package dev.tindersamurai.atencjobot.bot.event;
 
-import dev.tindersamurai.atencjobot.bot.AtencjoBotEventListener;
+import dev.tindersamurai.atencjobot.bot.ProkuratorBotEventListener;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.dv8tion.jda.api.entities.ChannelType;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.springframework.stereotype.Component;
 
 @Component @Slf4j
-public class PreventNadekoEvent extends AtencjoBotEventListener {
+public class PreventNadekoEvent extends ProkuratorBotEventListener {
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
