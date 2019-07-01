@@ -15,16 +15,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 
 @Component @Slf4j
 public class BotListApiFileInitializer implements IBotListApiInitializer {
 
 	@Data @NoArgsConstructor @AllArgsConstructor
 	private static final class JsonForm {
-		private Map<String, String[]> response;
-		private Map<String, String[]> alias;
 		private String[] error;
 		private String prefix;
 		private String token;
@@ -55,24 +51,6 @@ public class BotListApiFileInitializer implements IBotListApiInitializer {
 		if (form.error == null)
 			throw new NullPointerException("There are no error messages");
 		return form.error;
-	}
-
-	@Override
-	public Map<String, String[]> createResponse() {
-		if (form.response == null) {
-			log.info("No custom response found");
-			return Collections.emptyMap();
-		}
-		return Collections.unmodifiableMap(form.response);
-	}
-
-	@Override
-	public Map<String, String[]> createAlias() {
-		if (form.alias == null) {
-			log.info("No custom alias found");
-			return Collections.emptyMap();
-		}
-		return Collections.unmodifiableMap(form.alias);
 	}
 
 	@SuppressWarnings("SameParameterValue")

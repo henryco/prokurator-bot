@@ -7,10 +7,8 @@ import net.dv8tion.jda.core.managers.GuildController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 import java.util.Random;
 
-@Component
 public abstract class ProkuratorBotCommandListener extends ProkuratorBotEventListener {
 
 	private String[] error;

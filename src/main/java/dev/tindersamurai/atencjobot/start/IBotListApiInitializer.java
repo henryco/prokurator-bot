@@ -12,8 +12,4 @@ public interface IBotListApiInitializer {
 	String createPrefix();
 
 	String[] createErrorMsg();
-
-	Map<String, String[]> createResponse();
-
-	Map<String, String[]> createAlias();
 }
