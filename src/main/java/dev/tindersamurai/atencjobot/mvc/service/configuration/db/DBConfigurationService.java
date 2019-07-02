@@ -55,7 +55,10 @@ public class DBConfigurationService implements ConfigurationService {
 
 	@Override @Transactional
 	public <T> T get(@NonNull String name) {
-		val one = configurationRepo.getOne(name);
+		val found = configurationRepo.findById(name);
+		if (!found.isPresent()) return null;
+		val one = found.get();
+
 		//noinspection unchecked
 		return (T) converterMap.get(one.getType()).fromString(one.getValue(), one.getType());
 	}

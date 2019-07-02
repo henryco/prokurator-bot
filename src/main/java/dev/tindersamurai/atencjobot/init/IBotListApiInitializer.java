@@ -1,15 +1,10 @@
-package dev.tindersamurai.atencjobot.start;
+package dev.tindersamurai.atencjobot.init;
 
 import net.dv8tion.jda.core.JDA;
 
 import javax.security.auth.login.LoginException;
-import java.util.Map;
 
 public interface IBotListApiInitializer {
 
 	JDA createBotApi() throws LoginException;
-
-	String createPrefix();
-
-	String[] createErrorMsg();
 }

@@ -1,6 +1,5 @@
 package dev.tindersamurai.atencjobot.mvc.service.configuration;
 
-import lombok.val;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 

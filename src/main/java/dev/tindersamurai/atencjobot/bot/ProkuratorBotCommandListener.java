@@ -1,18 +1,15 @@
 package dev.tindersamurai.atencjobot.bot;
 
+import dev.tindersamurai.atencjobot.mvc.service.configuration.ConfigurationService;
 import lombok.val;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.managers.GuildController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.lang.NonNull;
-import java.util.Random;
 
 public abstract class ProkuratorBotCommandListener extends ProkuratorBotEventListener {
 
-	private String[] error;
-	private String prefix;
+	private ConfigurationService config;
 
 	protected abstract void onCommand(MessageReceivedEvent event, GuildController controller);
 
@@ -38,14 +35,19 @@ public abstract class ProkuratorBotCommandListener extends ProkuratorBotEventLis
 		return new Permission[0];
 	}
 
-	@Autowired @Qualifier("prefix")
-	public final void setCommandPrefix(@NonNull String prefix) {
-		this.prefix = prefix;
+	@Autowired
+	public final void setConfigurationService(ConfigurationService config) {
+		this.config = config;
 	}
 
-	@Autowired @Qualifier("error")
-	public final void setErrorMsg(@NonNull String[] errorMsg) {
-		this.error = errorMsg;
+	@SuppressWarnings("WeakerAccess")
+	protected String getErrorMsg() {
+		return this.config.get("error_message", "Error");
+	}
+
+	@SuppressWarnings("WeakerAccess")
+	protected String getPrefix() {
+		return this.config.get("prefix", "prokurator");
 	}
 
 	@Override
@@ -89,19 +91,17 @@ public abstract class ProkuratorBotCommandListener extends ProkuratorBotEventLis
 		val names = commandAlias();
 		if (names != null) {
 			for (val name: names) {
-				if (content.startsWith(prefix + cased(name, caseSensitive()).trim()))
+				if (content.startsWith(getPrefix() + cased(name, caseSensitive()).trim()))
 					return true;
 			}
 		}
-		return content.startsWith(prefix + cased(commandName(), caseSensitive()).trim());
+		return content.startsWith(getPrefix() + cased(commandName(), caseSensitive()).trim());
 	}
 
 	private void sendErrorMsg(MessageReceivedEvent event, Exception e) {
-		if (error == null || error.length == 0) return;
-		val coreMsg = error[new Random().nextInt(error.length)];
+		if (getErrorMsg() == null) return;
 		val reason = "```\n" + e.getMessage() + "\n```";
-
-		event.getChannel().sendMessage(coreMsg + "\n" + reason).queue();
+		event.getChannel().sendMessage(getErrorMsg() + "\n" + reason).queue();
 	}
 
 
