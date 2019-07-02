@@ -1,5 +1,6 @@
 package dev.tindersamurai.atencjobot.mvc.service.configuration;
 
+import lombok.val;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -11,9 +12,14 @@ public interface ConfigurationService {
 		this.addConfigParam(name, type, null);
 	}
 
+	void removeConfigParam(@NonNull String name);
+
 	<T> void set(@NonNull String name, @Nullable T value);
 
-	<T> T get(@NonNull String name, @NonNull T defaultValue);
+	default <T> T get(@NonNull String name, @NonNull T defaultValue) {
+		T o = this.get(name);
+		return o == null ? defaultValue : o;
+	}
 
 	<T> T get(@NonNull String name);
 
