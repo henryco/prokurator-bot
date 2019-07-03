@@ -1,13 +1,22 @@
 package dev.tindersamurai.atencjobot.bot.event;
 
 import dev.tindersamurai.atencjobot.bot.ProkuratorBotEventListener;
+import dev.tindersamurai.atencjobot.mvc.service.storage.FileStorageService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component @Slf4j
 public class ImagePostedEvent extends ProkuratorBotEventListener {
+
+	private final FileStorageService fileStorageService;
+
+	@Autowired
+	public ImagePostedEvent(FileStorageService fileStorageService) {
+		this.fileStorageService = fileStorageService;
+	}
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
@@ -66,6 +75,7 @@ public class ImagePostedEvent extends ProkuratorBotEventListener {
 			val image = a.isImage();
 			val size = a.getSize();
 			val url = a.getUrl();
+//			a.download()
 
 			log.info("---ATTACHMENT---");
 			log.info("NAME: {}", fileName);
