@@ -14,6 +14,9 @@ public class ImagePostedEvent extends ProkuratorBotEventListener {
 		log.info("image post event: {}", event);
 		val message = event.getMessage();
 
+		val group = message.getGroup();
+		val guild = message.getGuild();
+
 		val avatarUrl = message.getAuthor().getAvatarUrl();
 		val name = message.getAuthor().getName();
 		val tag = message.getAuthor().getAsTag();
@@ -37,6 +40,25 @@ public class ImagePostedEvent extends ProkuratorBotEventListener {
 		log.info("---CONTENT---");
 		log.info("TYPE: {}", type);
 		log.info("DATE: {}", date);
+
+		log.info("---GUILD---");
+		log.info("NAME: {}", guild.getName());
+		log.info("ID: {}", guild.getId());
+
+		log.info("---GROUP---");
+		log.info("{}", group);
+
+		log.info("---TEXT---");
+		val textName = message.getTextChannel().getName();
+		val textId = message.getTextChannel().getId();
+		log.info("NAME: {}", textName);
+		log.info("ID: {}", textId);
+
+		val par = message.getTextChannel().getParent();
+		log.info("---PARENT---");
+		log.info("P: {}", par);
+		if (par != null)
+			log.info("NAME: {}", par.getName());
 
 		val attachments = message.getAttachments();
 		for (val a : attachments) {
