@@ -25,9 +25,9 @@ public class MediaPost extends Post {
 	) Integer size;
 
 	private @Column(
-			name = "url",
+			name = "fid",
 			unique = true
-	) String url;
+	) String fileId;
 
 	private @Column(
 			name = "image",

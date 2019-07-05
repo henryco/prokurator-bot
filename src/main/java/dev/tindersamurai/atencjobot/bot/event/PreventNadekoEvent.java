@@ -18,6 +18,6 @@ public class PreventNadekoEvent extends ProkuratorBotEventListener {
 		if (event.getMember().getRoles().stream().noneMatch(r -> "Nadeko".equals(r.getName()))) return;
 
 		val channel = event.getChannel();
-		channel.sendMessage("Nadeko ty kurwo jebana!").queue();
+		channel.sendMessage("Remove nadeko").queue();
 	}
 }
