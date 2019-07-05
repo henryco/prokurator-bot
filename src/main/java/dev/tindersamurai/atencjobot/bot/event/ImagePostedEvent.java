@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.Date;
 
 @Component @Slf4j
@@ -42,7 +41,7 @@ public class ImagePostedEvent extends ProkuratorBotEventListener {
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-		log.info("image post event: {}", event);
+		log.debug("image post event: {}", event);
 		val message = event.getMessage();
 		val attachments = message.getAttachments();
 		if (attachments == null || attachments.isEmpty())
@@ -53,6 +52,7 @@ public class ImagePostedEvent extends ProkuratorBotEventListener {
 
 	@Transactional
 	protected void processAttachment(Message m, Attachment a) {
+		log.debug("processAttachment({}, {})", m, a);
 		val fileName = a.getFileName();
 		val image = a.isImage();
 		val size = a.getSize();
@@ -81,7 +81,7 @@ public class ImagePostedEvent extends ProkuratorBotEventListener {
 
 		try {
 			@Cleanup val stream = a.getInputStream();
-			val fid = fileStorageService.storeFile(stream);
+			val fid = fileStorageService.storeFile(stream, fileName);
 			mediaPost.setFileId(fid);
 		} catch (Exception e) {
 			log.error("Error while saving media file", e);

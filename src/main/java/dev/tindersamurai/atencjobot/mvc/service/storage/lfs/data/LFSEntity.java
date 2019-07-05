@@ -7,10 +7,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "lfs_file")
 public class LFSEntity {
 
 	private @Id @Column(
@@ -19,7 +21,6 @@ public class LFSEntity {
 
 	private @Column(
 			name = "path",
-			nullable = false,
 			updatable = false
 	) String path;
 

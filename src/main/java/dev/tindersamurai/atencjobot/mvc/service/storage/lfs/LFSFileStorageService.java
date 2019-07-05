@@ -3,20 +3,24 @@ package dev.tindersamurai.atencjobot.mvc.service.storage.lfs;
 import dev.tindersamurai.atencjobot.mvc.service.storage.FileStorageService;
 import dev.tindersamurai.atencjobot.mvc.service.storage.lfs.data.LFSEntity;
 import dev.tindersamurai.atencjobot.mvc.service.storage.lfs.data.LFSRepository;
+import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service @Slf4j
 public class LFSFileStorageService implements FileStorageService {
+
+	private static final String WORK_DIR = "resources/lfs";
 
 	private final LFSRepository lfsRepository;
 
@@ -25,7 +29,8 @@ public class LFSFileStorageService implements FileStorageService {
 		this.lfsRepository = lfsRepository;
 	}
 
-	private String persist(@NonNull String path) {
+	private String persist(String path) {
+		log.debug("persist({})", path);
 		val file = new LFSEntity(); {
 			file.setId(UUID.randomUUID().toString());
 			file.setPath(path);
@@ -35,36 +40,69 @@ public class LFSFileStorageService implements FileStorageService {
 	}
 
 	@Transactional
-	protected String getFilePath(@NonNull String fid) {
-		return lfsRepository.getOne(fid).getPath();
+	protected String getFilePath(@NonNull String fid)
+			throws FileNotFoundException {
+		log.debug("getFilePath({})", fid);
+		val one = lfsRepository.findById(fid);
+		if (!one.isPresent())
+			throw new FileNotFoundException(fid);
+		return one.get().getPath();
 	}
 
 	@Override
-	public OutputStream getFileStream(@NonNull String fid) {
-		val filePath = getFilePath(fid);
-		return null;
+	public OutputStream getFileStream(@NonNull String fid) throws FileNotFoundException {
+		log.debug("getFileStream({})", fid);
+		return new FileOutputStream(new File(getFilePath(fid)));
 	}
 
 	@Override
-	public byte[] getFileBytes(@NonNull String fid) {
-		val filePath = getFilePath(fid);
-		return new byte[0];
+	public byte[] getFileBytes(@NonNull String fid) throws FileNotFoundException {
+		log.debug("getFileBytes({})", fid);
+		val file = getFile(fid);
+		val length = file.length();
+		val bytes = new byte[(int) length];
+
+		try {
+			@Cleanup val stream = new FileOutputStream(file);
+			stream.write(bytes);
+			return bytes;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
-	public File getFile(@NonNull String fid) {
-		val filePath = getFilePath(fid);
-		return null;
+	public File getFile(@NonNull String fid) throws FileNotFoundException {
+		log.debug("getFile({})", fid);
+		return new File(getFilePath(fid));
 	}
 
 	@Override
 	public String storeFile(@NonNull File file) {
-
-		return persist("");
+		log.debug("storeFile({})", file);
+		return persist(file.getAbsolutePath());
 	}
 
 	@Override
-	public String storeFile(@NonNull InputStream stream) {
-		return persist("");
+	public String storeFile(@NonNull InputStream stream, @Nullable String name) {
+		log.debug("storeFile({}, {})", stream, name);
+		val fileName = name == null || name.isEmpty() ? UUID.randomUUID().toString() : name;
+		return persist(writeStreamToFile(stream, fileName));
+	}
+
+
+	/** @return Path to saved file */
+	private static String writeStreamToFile(@NonNull InputStream in, @NonNull String file) {
+		log.debug("writeStreamToFile({}, {})", in, file);
+		try {
+			val path = Paths.get(WORK_DIR, file);
+			//noinspection ResultOfMethodCallIgnored
+			new File(path.getParent().toUri()).mkdirs();
+			Files.copy(in, path);
+			return path.toString();
+		} catch (IOException e) {
+			log.error("Cannot save file", e);
+			return null;
+		}
 	}
 }

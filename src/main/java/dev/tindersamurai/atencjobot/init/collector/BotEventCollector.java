@@ -35,12 +35,13 @@ public class BotEventCollector extends ListenerAdapter implements IBotEventColle
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-		log.info("Collector event");
+		log.debug("Collector event");
 		collectData(event.getMessage());
 	}
 
 	@Transactional
 	protected void collectData(Message message) {
+		log.debug("collectData({})", message);
 		val user = new User(); {
 			val author = message.getAuthor();
 			user.setAvatar(author.getAvatarUrl());
