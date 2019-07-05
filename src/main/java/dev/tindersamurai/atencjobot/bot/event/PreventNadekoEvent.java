@@ -12,7 +12,7 @@ public class PreventNadekoEvent extends ProkuratorBotEventListener {
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-
+		log.info("nadeko event");
 		if (!event.isFromType(ChannelType.TEXT)) return;
 		if (!event.getAuthor().isBot()) return;
 		if (event.getMember().getRoles().stream().noneMatch(r -> "Nadeko".equals(r.getName()))) return;

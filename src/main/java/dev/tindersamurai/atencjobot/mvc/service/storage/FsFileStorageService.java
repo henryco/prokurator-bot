@@ -27,17 +27,17 @@ public class FsFileStorageService implements FileStorageService {
 	}
 
 	@Override
-	public void storeFile(String id, File file) {
+	public void storeFile(Metadata metadata, File file) {
 
 	}
 
 	@Override
-	public void storeFile(String id, InputStream stream) {
+	public void storeFile(Metadata metadata, byte[] bytes) {
 
 	}
 
 	@Override
-	public void storeFile(String id, byte[] bytes) {
+	public void storeFile(Metadata metadata, InputStream stream) {
 
 	}
 }

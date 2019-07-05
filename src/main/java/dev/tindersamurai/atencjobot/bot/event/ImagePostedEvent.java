@@ -2,11 +2,18 @@ package dev.tindersamurai.atencjobot.bot.event;
 
 import dev.tindersamurai.atencjobot.bot.ProkuratorBotEventListener;
 import dev.tindersamurai.atencjobot.mvc.service.storage.FileStorageService;
+import dev.tindersamurai.atencjobot.mvc.service.storage.FileStorageService.Metadata;
+import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.Message.Attachment;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.Date;
 
 @Component @Slf4j
 public class ImagePostedEvent extends ProkuratorBotEventListener {
@@ -22,68 +29,42 @@ public class ImagePostedEvent extends ProkuratorBotEventListener {
 	public void onMessageReceived(MessageReceivedEvent event) {
 		log.info("image post event: {}", event);
 		val message = event.getMessage();
-
-		val group = message.getGroup();
-		val guild = message.getGuild();
-
-		val avatarUrl = message.getAuthor().getAvatarUrl();
-		val name = message.getAuthor().getName();
-		val tag = message.getAuthor().getAsTag();
-
-		val channelName = message.getChannel().getName();
-		val channelId = message.getChannel().getId();
-
-		val date = message.getCreationTime().toString();
-		val type = message.getType();
-
-
-		log.info("---AUTHOR---");
-		log.info("TAG: {}", tag);
-		log.info("NAME: {}", name);
-		log.info("AVATAR: {}", avatarUrl);
-
-		log.info("---CHANNEL---");
-		log.info("NAME: {}", channelName);
-		log.info("ID: {}", channelId);
-
-		log.info("---CONTENT---");
-		log.info("TYPE: {}", type);
-		log.info("DATE: {}", date);
-
-		log.info("---GUILD---");
-		log.info("NAME: {}", guild.getName());
-		log.info("ID: {}", guild.getId());
-
-		log.info("---GROUP---");
-		log.info("{}", group);
-
-		log.info("---TEXT---");
-		val textName = message.getTextChannel().getName();
-		val textId = message.getTextChannel().getId();
-		log.info("NAME: {}", textName);
-		log.info("ID: {}", textId);
-
-		val par = message.getTextChannel().getParent();
-		log.info("---PARENT---");
-		log.info("P: {}", par);
-		if (par != null)
-			log.info("NAME: {}", par.getName());
-
 		val attachments = message.getAttachments();
-		for (val a : attachments) {
-			val fileName = a.getFileName();
-			val image = a.isImage();
-			val size = a.getSize();
-			val url = a.getUrl();
-//			a.download()
+		if (attachments == null || attachments.isEmpty())
+			return;
 
-			log.info("---ATTACHMENT---");
-			log.info("NAME: {}", fileName);
-			log.info("IMAGE: {}", image);
-			log.info("SIZE: {}", size);
-			log.info("URL: {}", url);
-		}
-
-		log.info("---END---");
+		attachments.forEach(a -> processAttachment(message, a));
 	}
+
+	private void processAttachment(Message m, Attachment a) {
+		val fileName = a.getFileName();
+		val image = a.isImage();
+		val size = a.getSize();
+		val url = a.getUrl();
+
+		log.info("---ATTACHMENT---");
+		log.info("NAME: {}", fileName);
+		log.info("IMAGE: {}", image);
+		log.info("SIZE: {}", size);
+		log.info("URL: {}", url);
+
+		val metadata = Metadata.builder()
+				.authorId(m.getAuthor().getId())
+				.channelId(m.getTextChannel().getId())
+				.date(Date.from(a.getCreationTime().toInstant()))
+				.name(a.getFileName())
+				.image(a.isImage())
+				.size(a.getSize())
+				.id(a.getId())
+				.build();
+
+		try {
+			@Cleanup val stream = a.getInputStream();
+			fileStorageService.storeFile(metadata, stream);
+		} catch (IOException e) {
+			log.error("Cannot get attachment input stream", e);
+			// just ignore...
+		}
+	}
+
 }

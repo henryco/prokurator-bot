@@ -1,5 +1,6 @@
 package dev.tindersamurai.atencjobot.init;
 
+import dev.tindersamurai.atencjobot.init.collector.IBotEventCollector;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.dv8tion.jda.core.JDA;
@@ -14,10 +15,15 @@ import javax.security.auth.login.LoginException;
 @Component @Slf4j @PropertySource(value = "classpath:/token.properties")
 public class BotListApiInitializer implements IBotListApiInitializer {
 
+	private final IBotEventCollector eventCollector;
 	private final Environment environment;
 
 	@Autowired
-	public BotListApiInitializer(Environment env) {
+	public BotListApiInitializer(
+			IBotEventCollector eventCollector,
+			Environment env
+	) {
+		this.eventCollector = eventCollector;
 		this.environment = env;
 	}
 
@@ -25,6 +31,8 @@ public class BotListApiInitializer implements IBotListApiInitializer {
 	public JDA createBotApi() throws LoginException {
 		log.info("createBotApi()");
 		val token = environment.getRequiredProperty("token");
-		return new JDABuilder(token).build();
+		val jda = new JDABuilder(token).build();
+		jda.addEventListener(eventCollector);
+		return jda;
 	}
 }

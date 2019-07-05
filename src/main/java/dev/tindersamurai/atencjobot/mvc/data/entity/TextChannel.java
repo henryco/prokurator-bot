@@ -22,10 +22,7 @@ public class TextChannel {
 			nullable = false
 	) String name;
 
-	private @Column(
-			name = "guild",
-			nullable = false
-	) @ManyToOne(
+	private @ManyToOne(
 			cascade = ALL
 	) Guild guild;
 

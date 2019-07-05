@@ -1,5 +1,7 @@
-package dev.tindersamurai.atencjobot.mvc.data.entity;
+package dev.tindersamurai.atencjobot.mvc.data.entity.post;
 
+import dev.tindersamurai.atencjobot.mvc.data.entity.TextChannel;
+import dev.tindersamurai.atencjobot.mvc.data.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,12 +10,15 @@ import javax.persistence.*;
 import java.util.Date;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.InheritanceType.*;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
-@Data @Entity
-@NoArgsConstructor
+
 @AllArgsConstructor
-public class MediaPost {
+@NoArgsConstructor
+@Data @Entity @Inheritance(
+		strategy = TABLE_PER_CLASS
+) /* package */ abstract class Post {
 
 	private @Id @Column(
 			name = "id"
@@ -27,27 +32,11 @@ public class MediaPost {
 			updatable = false
 	) Date date;
 
-	private @Column(
-			name = "author",
-			nullable = false,
-			updatable = false
-	) @ManyToOne(
+	private @ManyToOne(
 			cascade = ALL
 	) User author;
 
-	private @Column(
-			name = "name",
-			nullable = false
-	) String name;
-
-	private @Column(
-			name = "size",
-			nullable = false,
-			updatable = false
-	) Integer size;
-
-	private @Column(
-			name = "url",
-			unique = true
-	) String url;
+	private @ManyToOne(
+			cascade = ALL
+	) TextChannel channel;
 }
