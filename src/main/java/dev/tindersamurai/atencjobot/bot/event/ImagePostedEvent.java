@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Component @Slf4j
@@ -81,7 +83,8 @@ public class ImagePostedEvent extends ProkuratorBotEventListener {
 
 		try {
 			@Cleanup val stream = a.getInputStream();
-			val fid = fileStorageService.storeFile(stream, fileName);
+			val name = processFileName(m, fileName);
+			val fid = fileStorageService.storeFile(stream, name);
 			mediaPost.setFileId(fid);
 		} catch (Exception e) {
 			log.error("Error while saving media file", e);
@@ -89,6 +92,26 @@ public class ImagePostedEvent extends ProkuratorBotEventListener {
 		}
 
 		mediaPostRepo.save(mediaPost);
+	}
+
+
+	private String processFileName(Message message, String file) {
+		log.debug("processFileName({}, {})", message, file);
+		val guild = message.getGuild().getName();
+		val author = message.getAuthor().getName();
+
+		val textChannel = message.getTextChannel();
+		val channel = textChannel.getName();
+		val parent = textChannel.getParent() != null
+				? textChannel.getParent().getName()
+				: "default";
+
+		val pattern = DateTimeFormatter.ofPattern("yyyy_MM_dd");
+		val date = message.getCreationTime().format(pattern);
+
+		val s = File.separator;
+
+		return guild + s + parent + s + channel + s + date + s + author + s + file;
 	}
 
 }
