@@ -1,10 +1,6 @@
-# prokurator
-Teczka rośnie...
 
- 888888ba   888888ba   .88888.  dP     dP dP     dP  888888ba   .d888888  d888888P  .88888.   888888ba  
- 88    `8b  88    `8b d8'   `8b 88   .d8' 88     88  88    `8b d8'    88     88    d8'   `8b  88    `8b 
-a88aaaa8P' a88aaaa8P' 88     88 88aaa8P'  88     88 a88aaaa8P' 88aaaaa88a    88    88     88 a88aaaa8P' 
- 88         88   `8b. 88     88 88   `8b. 88     88  88   `8b. 88     88     88    88     88  88   `8b. 
- 88         88     88 Y8.   .8P 88     88 Y8.   .8P  88     88 88     88     88    Y8.   .8P  88     88 
- dP         dP     dP  `8888P'  dP     dP `Y88888P'  dP     dP 88     88     dP     `8888P'   dP     dP 
-oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+   dBBBBBb   dBBBBBb     dBBBBP     dBP dBP     dBP dBP   dBBBBBb  dBBBBBb  dBBBBBBP     dBBBBP   dBBBBBb
+       dB'       dBP    dBP.BP     d8P.dBP                    dBP       BB              dBP.BP        dBP
+   dBBBP'    dBBBBK    dBP.BP     dBBBBP      dBP dBP     dBBBBK    dBP BB   dBP       dBP.BP     dBBBBK 
+  dBP       dBP  BB   dBP.BP     dBP BB      dBP_dBP     dBP  BB   dBP  BB  dBP       dBP.BP     dBP  BB 
+ dBP       dBP  dB'  dBBBBP     dBP dBP     dBBBBBP     dBP  dB'  dBBBBBBB dBP       dBBBBP     dBP  dB'
