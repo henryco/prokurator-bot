@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.OnlineStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -31,7 +32,9 @@ public class BotListApiInitializer implements IBotListApiInitializer {
 	public JDA createBotApi() throws LoginException {
 		log.info("createBotApi()");
 		val token = environment.getRequiredProperty("token");
-		val jda = new JDABuilder(token).build();
+		val jda = new JDABuilder(token)
+				.setStatus(OnlineStatus.INVISIBLE)
+				.build();
 		jda.addEventListener(eventCollector);
 		return jda;
 	}

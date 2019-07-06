@@ -61,6 +61,7 @@ public class BotEventCollector extends ListenerAdapter implements IBotEventColle
 		val textChannel = new TextChannel(); {
 			val channel = message.getTextChannel();
 			textChannel.setName(channel.getName());
+			textChannel.setNsfw(channel.isNSFW());
 			textChannel.setId(channel.getId());
 			textChannel.setGuild(guild);
 

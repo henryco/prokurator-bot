@@ -29,4 +29,9 @@ public class TextChannel {
 	private @Column(
 			name = "category"
 	) String category;
+
+	private @Column(
+			name = "nsfw",
+			nullable = false
+	) Boolean nsfw;
 }
