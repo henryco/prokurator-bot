@@ -1,0 +1,23 @@
+logging:
+  level:
+    dev:
+      tindersamurai:
+        atencjobot: DEBUG
+
+spring:
+
+  servlet:
+    multipart:
+      max-request-size: '150MB'
+      max-file-size: '150MB'
+
+  datasource:
+    initialization-mode: always
+    url: 'jdbc:h2:file:./.internal/database'
+    username: 'sa'
+    password: 'isekai'
+    driver-class-name: 'org.h2.Driver'
+
+  jpa:
+    hibernate:
+      ddl-auto: update
