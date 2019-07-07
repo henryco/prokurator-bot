@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>dev.tindersamurai</groupId>
-    <artifactId>atencjobot</artifactId>
+    <artifactId>prokurator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>prokurator</name>
 
