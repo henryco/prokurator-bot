@@ -98,6 +98,18 @@ public class LFSFileStorageService implements FileStorageService {
 			val path = Paths.get(WORK_DIR, file);
 			//noinspection ResultOfMethodCallIgnored
 			new File(path.getParent().toUri()).mkdirs();
+
+			val f = path.toFile();
+			if (f.exists()) {
+				log.debug("File: {} already exists, create new name...", file);
+				val uniqueOne = UUID.randomUUID().toString() + "-" + f.getName();
+				log.debug("New unique file name: {}", uniqueOne);
+				val uniquePath = Paths.get(path.getParent().toString(), uniqueOne);
+
+				Files.copy(in, uniquePath);
+				return uniquePath.toString();
+			}
+
 			Files.copy(in, path);
 			return path.toString();
 		} catch (IOException e) {

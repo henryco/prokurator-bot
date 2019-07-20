@@ -111,7 +111,7 @@ public class ImagePostedEvent extends ProkuratorBotEventListener {
 
 		val s = File.separator;
 
-		return guild + s + parent + s + channel + s + date + s + author + s + file;
+		return guild + s + author + s + parent + s + date + s + channel + s + file;
 	}
 
 }
