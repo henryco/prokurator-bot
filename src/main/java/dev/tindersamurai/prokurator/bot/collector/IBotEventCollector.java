@@ -1,4 +1,4 @@
-package dev.tindersamurai.prokurator.init.collector;
+package dev.tindersamurai.prokurator.bot.collector;
 
 import net.dv8tion.jda.core.hooks.EventListener;
 

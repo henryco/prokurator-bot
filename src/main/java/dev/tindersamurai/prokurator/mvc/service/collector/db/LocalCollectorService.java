@@ -1,4 +1,4 @@
-package dev.tindersamurai.prokurator.init.collector;
+package dev.tindersamurai.prokurator.mvc.service.collector.db;
 
 import dev.tindersamurai.prokurator.mvc.data.dao.jpa.GuildRepo;
 import dev.tindersamurai.prokurator.mvc.data.dao.jpa.TextChannelRepo;
@@ -6,24 +6,22 @@ import dev.tindersamurai.prokurator.mvc.data.dao.jpa.UserRepo;
 import dev.tindersamurai.prokurator.mvc.data.entity.Guild;
 import dev.tindersamurai.prokurator.mvc.data.entity.TextChannel;
 import dev.tindersamurai.prokurator.mvc.data.entity.User;
+import dev.tindersamurai.prokurator.mvc.service.collector.CollectorService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component @Slf4j
-public class BotEventCollector extends ListenerAdapter implements IBotEventCollector {
+@Service @Slf4j
+public class LocalCollectorService implements CollectorService {
 
 	private final TextChannelRepo textChannelRepo;
 	private final GuildRepo guildRepo;
 	private final UserRepo userRepo;
 
 	@Autowired
-	public BotEventCollector(
+	public LocalCollectorService(
 			TextChannelRepo textChannelRepo,
 			GuildRepo guildRepo,
 			UserRepo userRepo
@@ -33,43 +31,34 @@ public class BotEventCollector extends ListenerAdapter implements IBotEventColle
 		this.userRepo = userRepo;
 	}
 
-	@Override
-	public void onMessageReceived(MessageReceivedEvent event) {
-		log.debug("Collector event");
-		collectData(event.getMessage());
-	}
+	@Override @Transactional
+	public void saveDiscordEvent(EventEntity entity) {
+		log.debug("saveDiscordEvent: {}", entity);
 
-	@Transactional
-	protected void collectData(Message message) {
-		log.debug("collectData({})", message);
 		val user = new User(); {
-			val author = message.getAuthor();
-			user.setAvatar(author.getAvatarUrl());
+			val author = entity.getUser();
+			user.setAvatar(author.getAvatar());
 			user.setName(author.getName());
 			user.setId(author.getId());
 			userRepo.save(user);
 		}
 
 		val guild = new Guild(); {
-			val _guild = message.getGuild();
-			guild.setIconUrl(_guild.getIconUrl());
+			val _guild = entity.getChannel().getGuild();
+			guild.setIconUrl(_guild.getAvatar());
 			guild.setName(_guild.getName());
-			guild.setId(_guild.getIconId());
+			guild.setId(_guild.getId());
 			guildRepo.save(guild);
 		}
 
 		val textChannel = new TextChannel(); {
-			val channel = message.getTextChannel();
+			val channel = entity.getChannel();
+			textChannel.setCategory(channel.getCategory());
 			textChannel.setName(channel.getName());
-			textChannel.setNsfw(channel.isNSFW());
+			textChannel.setNsfw(channel.getNsfw());
 			textChannel.setId(channel.getId());
 			textChannel.setGuild(guild);
-
-			val parent = channel.getParent();
-			if (parent != null)
-				textChannel.setCategory(parent.getName());
 			textChannelRepo.save(textChannel);
 		}
 	}
-
 }
