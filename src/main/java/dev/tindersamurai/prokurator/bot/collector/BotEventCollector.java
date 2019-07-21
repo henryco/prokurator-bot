@@ -1,4 +1,4 @@
-package dev.tindersamurai.prokurator.init.collector;
+package dev.tindersamurai.prokurator.bot.collector;
 
 import dev.tindersamurai.prokurator.mvc.service.collector.CollectorService;
 import dev.tindersamurai.prokurator.mvc.service.collector.CollectorService.ChannelEntity;

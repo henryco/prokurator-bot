@@ -1,6 +1,6 @@
 package dev.tindersamurai.prokurator.init;
 
-import dev.tindersamurai.prokurator.init.collector.IBotEventCollector;
+import dev.tindersamurai.prokurator.bot.collector.IBotEventCollector;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.dv8tion.jda.core.JDA;
