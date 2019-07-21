@@ -7,13 +7,12 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.LoginException;
 
-@Component @Slf4j @PropertySource(value = "classpath:/token.properties")
+@Component @Slf4j
 public class BotListApiInitializer implements IBotListApiInitializer {
 
 	private final IBotEventCollector eventCollector;
@@ -31,7 +30,7 @@ public class BotListApiInitializer implements IBotListApiInitializer {
 	@Override
 	public JDA createBotApi() throws LoginException {
 		log.info("createBotApi()");
-		val token = environment.getRequiredProperty("token");
+		val token = environment.getRequiredProperty("prokurator.bot.token");
 		val jda = new JDABuilder(token)
 				.setStatus(OnlineStatus.INVISIBLE)
 				.build();

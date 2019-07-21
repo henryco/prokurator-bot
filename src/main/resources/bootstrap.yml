@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: prokurator-bot
+  cloud:
+    config:
+      uri: https://config.tindersamurai.dev
