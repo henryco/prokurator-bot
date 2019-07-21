@@ -1,11 +1,9 @@
 package dev.tindersamurai.prokurator.init.collector;
 
-import dev.tindersamurai.prokurator.mvc.data.dao.jpa.GuildRepo;
-import dev.tindersamurai.prokurator.mvc.data.dao.jpa.TextChannelRepo;
-import dev.tindersamurai.prokurator.mvc.data.dao.jpa.UserRepo;
-import dev.tindersamurai.prokurator.mvc.data.entity.Guild;
-import dev.tindersamurai.prokurator.mvc.data.entity.TextChannel;
-import dev.tindersamurai.prokurator.mvc.data.entity.User;
+import dev.tindersamurai.prokurator.mvc.service.collector.CollectorService;
+import dev.tindersamurai.prokurator.mvc.service.collector.CollectorService.ChannelEntity;
+import dev.tindersamurai.prokurator.mvc.service.collector.CollectorService.DiscordEntity;
+import dev.tindersamurai.prokurator.mvc.service.collector.CollectorService.EventEntity;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.dv8tion.jda.core.entities.Message;
@@ -18,19 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Component @Slf4j
 public class BotEventCollector extends ListenerAdapter implements IBotEventCollector {
 
-	private final TextChannelRepo textChannelRepo;
-	private final GuildRepo guildRepo;
-	private final UserRepo userRepo;
+	private final CollectorService collectorService;
 
 	@Autowired
-	public BotEventCollector(
-			TextChannelRepo textChannelRepo,
-			GuildRepo guildRepo,
-			UserRepo userRepo
-	) {
-		this.textChannelRepo = textChannelRepo;
-		this.guildRepo = guildRepo;
-		this.userRepo = userRepo;
+	public BotEventCollector(CollectorService collectorService) {
+		this.collectorService = collectorService;
 	}
 
 	@Override
@@ -42,34 +32,26 @@ public class BotEventCollector extends ListenerAdapter implements IBotEventColle
 	@Transactional
 	protected void collectData(Message message) {
 		log.debug("collectData({})", message);
-		val user = new User(); {
-			val author = message.getAuthor();
-			user.setAvatar(author.getAvatarUrl());
-			user.setName(author.getName());
-			user.setId(author.getId());
-			userRepo.save(user);
+
+		val a = message.getAuthor();
+		val user = new DiscordEntity(a.getId(), a.getName(), a.getAvatarUrl());
+
+		val g = message.getGuild();
+		val guild = new DiscordEntity(g.getId(), g.getName(), g.getId());
+
+		val t = message.getTextChannel();
+		val channelBuilder = ChannelEntity.builder(); {
+			channelBuilder.name(t.getName());
+			channelBuilder.nsfw(t.isNSFW());
+			channelBuilder.id(t.getId());
+			channelBuilder.guild(guild);
+			val parent = t.getParent();
+			if (t.getParent() != null)
+				channelBuilder.category(parent.getName());
 		}
 
-		val guild = new Guild(); {
-			val _guild = message.getGuild();
-			guild.setIconUrl(_guild.getIconUrl());
-			guild.setName(_guild.getName());
-			guild.setId(_guild.getIconId());
-			guildRepo.save(guild);
-		}
-
-		val textChannel = new TextChannel(); {
-			val channel = message.getTextChannel();
-			textChannel.setName(channel.getName());
-			textChannel.setNsfw(channel.isNSFW());
-			textChannel.setId(channel.getId());
-			textChannel.setGuild(guild);
-
-			val parent = channel.getParent();
-			if (parent != null)
-				textChannel.setCategory(parent.getName());
-			textChannelRepo.save(textChannel);
-		}
+		val entity = new EventEntity(user, channelBuilder.build());
+		collectorService.saveDiscordEvent(entity);
 	}
 
 }
