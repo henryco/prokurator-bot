@@ -3,12 +3,10 @@ package dev.tindersamurai.prokurator;
 import dev.tindersamurai.prokurator.init.IBotListApiInitializer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.h2.tools.Server;
 import net.dv8tion.jda.core.JDA;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 import javax.security.auth.login.LoginException;
@@ -28,18 +26,6 @@ public class ProkuratorBotApplication {
 			System.exit(42);
 			throw new RuntimeException("Login exception", e);
 		}
-	}
-
-	@Bean @Profile("dev")
-	public Server h2Server() {
-		val server = new Server();
-		try {
-			server.runTool("-tcp");
-			server.runTool("-tcpAllowOthers");
-		} catch (Exception e) {
-			log.error("Cannot setup h2 server", e);
-		}
-		return server;
 	}
 
 	@Bean

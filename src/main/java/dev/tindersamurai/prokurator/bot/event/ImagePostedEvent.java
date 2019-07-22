@@ -1,11 +1,9 @@
 package dev.tindersamurai.prokurator.bot.event;
 
+import dev.tindersamurai.prokurator.backend.commons.entity.MediaEvent;
+import dev.tindersamurai.prokurator.backend.commons.service.IFileStorageService;
+import dev.tindersamurai.prokurator.backend.commons.service.IMediaService;
 import dev.tindersamurai.prokurator.bot.ProkuratorBotEventListener;
-import dev.tindersamurai.prokurator.mvc.data.dao.jpa.MediaPostRepo;
-import dev.tindersamurai.prokurator.mvc.data.dao.jpa.TextChannelRepo;
-import dev.tindersamurai.prokurator.mvc.data.dao.jpa.UserRepo;
-import dev.tindersamurai.prokurator.mvc.data.entity.post.MediaPost;
-import dev.tindersamurai.prokurator.mvc.service.storage.FileStorageService;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,22 +21,16 @@ import java.util.Date;
 @Component @Slf4j
 public class ImagePostedEvent extends ProkuratorBotEventListener {
 
-	private final FileStorageService fileStorageService;
-	private final TextChannelRepo textChannelRepo;
-	private final MediaPostRepo mediaPostRepo;
-	private final UserRepo userRepo;
+	private final IFileStorageService fileStorageService;
+	private final IMediaService mediaService;
 
 	@Autowired
 	public ImagePostedEvent(
-			FileStorageService fileStorageService,
-			TextChannelRepo textChannelRepo,
-			MediaPostRepo mediaPostRepo,
-			UserRepo userRepo
+			IFileStorageService fileStorageService,
+			IMediaService mediaService
 	) {
 		this.fileStorageService = fileStorageService;
-		this.textChannelRepo = textChannelRepo;
-		this.mediaPostRepo = mediaPostRepo;
-		this.userRepo = userRepo;
+		this.mediaService = mediaService;
 	}
 
 	@Override
@@ -55,6 +47,9 @@ public class ImagePostedEvent extends ProkuratorBotEventListener {
 	@Transactional
 	protected void processAttachment(Message m, Attachment a) {
 		log.debug("processAttachment({}, {})", m, a);
+
+		if (m == null || a == null) return;
+
 		val fileName = a.getFileName();
 		val image = a.isImage();
 		val size = a.getSize();
@@ -68,30 +63,34 @@ public class ImagePostedEvent extends ProkuratorBotEventListener {
 		log.info("SIZE: {}", size);
 		log.info("URL: {}", url);
 
-		val channel = textChannelRepo.getOne(m.getTextChannel().getId());
-		val author = userRepo.getOne(m.getAuthor().getId());
-
-		val mediaPost = new MediaPost(); {
-			mediaPost.setDate(Date.from(a.getCreationTime().toInstant()));
-			mediaPost.setChannel(channel);
-			mediaPost.setAuthor(author);
-			mediaPost.setName(fileName);
-			mediaPost.setImage(image);
-			mediaPost.setSize(size);
-			mediaPost.setId(id);
+		val attachment = MediaEvent.Attachment.builder(); {
+			attachment.created(Date.from(a.getCreationTime().toInstant()).getTime());
+			attachment.name(fileName);
+			attachment.image(image);
+			attachment.size(size);
 		}
 
 		try {
 			@Cleanup val stream = a.getInputStream();
 			val name = processFileName(m, fileName);
 			val fid = fileStorageService.storeFile(stream, name);
-			mediaPost.setFileId(fid);
+
+			attachment.id(fid);
 		} catch (Exception e) {
 			log.error("Error while saving media file", e);
-			return;
 		}
 
-		mediaPostRepo.save(mediaPost);
+		val builder = MediaEvent.builder(); {
+			builder.channelId(m.getTextChannel().getId());
+			builder.authorId(m.getAuthor().getId());
+			builder.attachment(attachment.build());
+			builder.id(m.getId());
+		}
+
+		val event = builder.build();
+		log.debug("EVENT: {}", event);
+
+		mediaService.storeMedia(event);
 	}
 
 

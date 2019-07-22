@@ -1,6 +1,7 @@
 package dev.tindersamurai.prokurator.bot;
 
-import dev.tindersamurai.prokurator.mvc.service.configuration.ConfigurationService;
+import dev.tindersamurai.prokurator.backend.commons.service.IConfigurationService;
+
 import lombok.val;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class ProkuratorBotCommandListener extends ProkuratorBotEventListener {
 
-	private ConfigurationService config;
+	private IConfigurationService config;
 
 	protected abstract void onCommand(MessageReceivedEvent event, GuildController controller);
 
@@ -36,7 +37,7 @@ public abstract class ProkuratorBotCommandListener extends ProkuratorBotEventLis
 	}
 
 	@Autowired
-	public final void setConfigurationService(ConfigurationService config) {
+	public final void setConfigurationService(IConfigurationService config) {
 		this.config = config;
 	}
 
