@@ -29,7 +29,7 @@
         <dependency>
             <groupId>org.bitbucket.tinder-samurai.prokurator-backend</groupId>
             <artifactId>commons</artifactId>
-            <version>0.0.3-alpha</version>
+            <version>0.0.4-alpha</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.squareup.okhttp3</groupId>

@@ -6,26 +6,24 @@ import dev.tindersamurai.prokurator.backend.commons.service.ICollectorService;
 import dev.tindersamurai.prokurator.backend.commons.service.IConfigurationService;
 import dev.tindersamurai.prokurator.backend.commons.service.IFileStorageService;
 import dev.tindersamurai.prokurator.backend.commons.service.IMediaService;
+import dev.tindersamurai.prokurator.prop.Properties;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 @Configuration @Slf4j
 public class RestServicesConfiguration {
 
-	@Value class RSCProps {
+	@Value static class RSCProps {
 		private ObjectMapper mapper;
 		private String url;
 	}
 
 	@Bean
-	public RSCProps provideBackendServiceUrl(ObjectMapper mapper, Environment env) {
-		log.debug("provideBackendServiceUrl: {}, {}", mapper, env);
-		val host = env.getRequiredProperty("prokurator.services.backend");
-		return new RSCProps(mapper, host);
+	public RSCProps provideBackendServiceUrl(ObjectMapper mapper, Properties properties) {
+		log.debug("provideBackendServiceUrl: {}, {}", mapper, properties);
+		return new RSCProps(mapper, properties.getBackendServiceUrl());
 	}
 
 	@Bean
