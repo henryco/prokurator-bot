@@ -6,7 +6,7 @@ docker run \
   -itd -p 33635:8080 \
   --name=prokurator_bot \
   --memory="800m" \
-  --restart=on-failure:10 \
+  --restart on-failure \
   tindersamurai/prokurator_bot
   
 docker ps -a | grep prokurator_bot
