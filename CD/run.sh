@@ -5,7 +5,7 @@ docker rm -f prokurator_bot
 docker run \
   -itd -p 33635:8080 \
   --name=prokurator_bot \
-  --memory="800m"
+  --memory="800m" \
   --restart=on-failure:10 \
   tindersamurai/prokurator_bot
   
