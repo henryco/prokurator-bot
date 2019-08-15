@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd deployments/Prokurator/bot
+chmod --recursive a+x ./
+./stop.sh
+./build.sh
+./run.sh
