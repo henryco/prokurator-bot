@@ -3,7 +3,7 @@
 docker rm -f prokurator_bot
 
 docker run \
-  -itd -p 8888:8888 \
+  -itd -p 33635:8080 \
   --name=prokurator_bot \
   --memory="800m"
   --restart=on-failure:10 \
