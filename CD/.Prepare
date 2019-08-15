@@ -1,0 +1,4 @@
+#!/bin/bash
+(rm -r deployments/Prokurator/bot) || true
+(mkdir deployments/Prokurator) || true
+(mkdir deployments/Prokurator/bot) || true
