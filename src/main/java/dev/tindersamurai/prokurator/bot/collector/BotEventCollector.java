@@ -3,7 +3,6 @@ package dev.tindersamurai.prokurator.bot.collector;
 import dev.tindersamurai.prokurator.backend.commons.entity.CollectorEvent;
 import dev.tindersamurai.prokurator.backend.commons.entity.CollectorEvent.ChannelEntity;
 import dev.tindersamurai.prokurator.backend.commons.entity.CollectorEvent.DiscordEntity;
-import dev.tindersamurai.prokurator.backend.commons.service.ICollectorService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.dv8tion.jda.core.entities.Message;
@@ -16,12 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Component @Slf4j
 public class BotEventCollector extends ListenerAdapter implements IBotEventCollector {
 
-	private final ICollectorService collectorService;
+	private final CollectorCache collectorCache;
 
 	@Autowired
-	public BotEventCollector(ICollectorService collectorService) {
-		this.collectorService = collectorService;
+	public BotEventCollector(CollectorCache collectorCache) {
+		this.collectorCache = collectorCache;
 	}
+
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
@@ -57,7 +57,8 @@ public class BotEventCollector extends ListenerAdapter implements IBotEventColle
 		val entity = new CollectorEvent(user, channelBuilder.build());
 		log.debug("entity: {}", entity);
 
-		collectorService.saveDiscordEvent(entity);
+		val cacheId = user.getId() + "-" + guild.getId() + "-" + t.getId();
+		collectorCache.collect(entity, cacheId);
 	}
 
 }
